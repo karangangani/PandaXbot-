@@ -8,13 +8,284 @@
     <script src='//libtl.com/sdk.js' data-zone='9892483' data-sdk='show_9892483'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* [Your CSS here - keep it as is from previous code] */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e); /* Changed to darker gradient */
+            color: #e0e0e0;
+            padding: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(10, 20, 40, 0.9); /* Darker background */
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0, 191, 255, 0.5); /* Cyan border */
+            box-shadow: 0 8px 32px rgba(0, 191, 255, 0.2);
+        }
+        .header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(90deg, #00bcd4, #6200ea); /* Cyan to purple gradient */
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4);
+        }
+        .header h1 { font-size: 24px; font-weight: 600; color: #fff; }
+        .header p { font-size: 14px; color: #b3e5fc; }
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(20, 30, 50, 0.8); /* Darker user info */
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #00bcd4; /* Cyan border */
+            transition: transform 0.3s;
+        }
+        .user-info:hover { transform: translateY(-5px); }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            background: rgba(20, 30, 50, 0.8); /* Darker nav */
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #00bcd4; /* Cyan border */
+        }
+        .nav-btn {
+            padding: 10px 15px;
+            background: #00bcd4; /* Cyan button */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-btn.active { background: #0097a7; box-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+        .nav-btn:hover { transform: scale(1.05); }
+        .section {
+            display: none;
+            padding: 20px;
+            background: rgba(20, 30, 50, 0.8); /* Darker section */
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #00bcd4; /* Cyan border */
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .section.active { display: block; }
+        .stats { display: flex; justify-content: space-between; margin: 15px 0; }
+        .stat-box {
+            background: rgba(10, 20, 40, 0.7); /* Darker stat box */
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+            border: 1px solid #00e5ff; /* Brighter cyan */
+            transition: all 0.3s;
+        }
+        .stat-box:hover { background: rgba(0, 191, 255, 0.2); }
+        .stat-value { font-size: 20px; color: #00e5ff; font-weight: 600; }
+        .stat-label { font-size: 12px; color: #b3e5fc; }
+        .referral-section {
+            text-align: center;
+            padding: 15px;
+            background: rgba(10, 20, 40, 0.7); /* Darker referral section */
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px dashed #00e5ff; /* Brighter cyan */
+        }
+        .referral-code {
+            padding: 10px;
+            background: rgba(20, 30, 50, 0.8); /* Darker referral code */
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #00e5ff;
+            font-weight: 600;
+            border: 1px solid #00bcd4; /* Cyan border */
+        }
+        .info-text { text-align: center; margin: 10px 0; color: #b3e5fc; font-size: 12px; }
+        .ad-container {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b); /* Darker ad container */
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid #00bcd4; /* Cyan border */
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .ad-container:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3); }
+        .ad-title { font-size: 18px; margin-bottom: 5px; color: #00bcd4; }
+        .ad-description { color: #b3e5fc; margin-bottom: 10px; }
+        .btn {
+            padding: 10px 20px;
+            background: #00bcd4; /* Cyan button */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #0097a7; transform: scale(1.05); }
+        .btn:disabled { background: #444; cursor: not-allowed; }
+        .loader {
+            border: 4px solid #222;
+            border-top: 4px solid #00bcd4; /* Cyan loader */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .footer { text-align: center; margin-top: 15px; color: #888; font-size: 12px; }
+        .withdraw-form { margin-top: 15px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #b3e5fc; }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #222;
+            color: #e0e0e0;
+        }
+        .ad-status { text-align: center; margin: 10px 0; padding: 10px; background: rgba(20, 30, 50, 0.8); border-radius: 10px; }
+        .countdown { font-size: 16px; color: #00e5ff; font-weight: 600; margin: 10px 0; }
+        .channel-btn {
+            padding: 10px 20px;
+            background: #00bcd4; /* Cyan button */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .channel-btn:hover { background: #0097a7; transform: scale(1.05); }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- [Your HTML body - keep it as is from previous code] -->
+        <div class="header">
+            <h1>Earn With Telegram</h1>
+            <p>Watch Ads & Earn Rewards</p>
+            <div class="user-info">
+                <div>
+                    <div id="user-name">Loading...</div>
+                    <div id="user-id">ID: Loading...</div>
+                </div>
+                <div id="user-coins">0 🪙</div>
+            </div>
+        </div>
+          <div class="nav">
+            <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="showSection('ads')">Ads</button>
+            <button class="nav-btn" onclick="showSection('withdraw')">Withdraw</button>
+        </div>
+        
+        <div id="dashboard" class="section active">
+            <h2>Your Dashboard</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="total-coins">0 🪙</div>
+                    <div class="stat-label">Total Coins</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="ads-watched">0</div>
+                    <div class="stat-label">Ads Watched</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="ref-count">0</div>
+                    <div class="stat-label">Referrals</div>
+                </div>
+            </div>
+            <div class="referral-section">
+                <h3>Your Referral Link</h3>
+                <div class="referral-code" id="ref-code">Loading...</div>
+                <button class="btn" id="copyReferral">Copy Referral Link</button>
+                <p id="ref-status"></p>
+                <p>Share this link with friends to earn 100 coins after 24 hours if 2 referrals are completed!</p>
+            </div>
+            <div class="info-text">
+                <p>🎯 Daily Limit: 100 ads per day (resets every 12h)</p>
+                <p>💰 Each ad gives you 20 🪙</p>
+            </div>
+            <button class="channel-btn" onclick="joinChannel()">Join Official Channel</button>
+        </div>
+        
+        <div id="ads" class="section">
+            <h2>Watch Ads & Earn Coins</h2>
+            <p class="info-text">Click an ad to watch and earn 20 🪙. After 20 ads, refer 2 friends to unlock all ads.</p>
+            <div class="ad-container" onclick="watchAd('interstitial')">
+                <div class="ad-title">Rewarded Interstitial Ad</div>
+                <div class="ad-description">Watch a full-screen ad and earn 20 🪙</div>
+                <button class="btn">Watch Ad</button>
+            </div>
+            <div class="ad-container" onclick="watchAd('popup')">
+                <div class="ad-title">Rewarded Popup Ad</div>
+                <div class="ad-description">Watch a popup ad and earn 20 🪙</div>
+                <button class="btn">Watch Ad</button>
+            </div>
+            <div class="ad-container" onclick="watchAd('inApp')">
+                <div class="ad-title">In-App Interstitial Ad</div>
+                <div class="ad-description">Watch an in-app ad and earn 20 🪙</div>
+                <button class="btn">Watch Ad</button>
+            </div>
+            <div class="loader" id="ad-loader"></div>
+            <div class="ad-status">
+                <p id="ads-today">Ads watched today: 0/100</p>
+                <p id="next-ad">Next ad available: Now</p>
+                <div class="countdown" id="countdown" style="display: none;">15s</div>
+                <p id="ad-lock-status"></p>
+            </div>
+        </div>
+        
+        <div id="withdraw" class="section">
+            <h2>Withdraw Your Earnings</h2>
+            <p class="info-text">Minimum withdrawal: 50,000 🪙 = 25 USDT | Must have 20 referrals</p>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="withdraw-coins">0 🪙</div>
+                    <div class="stat-label">Your Coins</div>
+                </div>
+            </div>
+            <div class="withdraw-form">
+                <div class="form-group">
+                    <label for="wallet-address">Binance ERC20 Wallet Address</label>
+                    <input type="text" id="wallet-address" placeholder="Enter your wallet address">
+                </div>
+                <div class="form-group">
+                    <label for="withdraw-amount">Amount to Withdraw (Coins)</label>
+                    <input type="number" id="withdraw-amount" placeholder="Min 50,000 🪙">
+                </div>
+                <div class="form-group">
+                    <label for="referrals">Number of Referrals</label>
+                    <input type="number" id="referrals" placeholder="Min 20 referrals">
+                </div>
+                <button class="btn" onclick="requestWithdrawal()">Request Withdrawal</button>
+                <button class="btn" onclick="makeBinanceAccount()" style="margin-top: 10px;">Make account on Binance</button>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Earn With Telegram © 2025</p>
+        </div>
     </div>
+
     <script>
         const SUPABASE_URL = 'https://lkrkyalivrrmkoyfrhit.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxrcmt5YWxpdnJybWtveWZyaGl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNDY1MDUsImV4cCI6MjA3MzcyMjUwNX0.g_lW4S9-C8uGxC5JrXfK_NWQEPnwwmMhT7vLdfS0K4Y';
@@ -37,7 +308,8 @@
             walletAddress: "",
             withdrawals: [],
             referralRewardsPending: {},
-            lastCopyTime: 0
+            lastCopyTime: 0,
+            lastReferralCheck: 0 // For 24h referral check
         };
 
         async function initApp() {
@@ -72,6 +344,7 @@
                     userData = { ...userData, ...existingUser };
                 }
                 await checkAdReset();
+                checkReferralMilestone();
                 updateUI();
                 updateAdAvailability();
                 await checkReferralRewards();
@@ -108,7 +381,7 @@
                                 { referrer_id: referrer.id, referred_id: userData.userId, timestamp: Date.now(), rewarded: false }
                             ]);
                             await supabase.rpc('increment_referrals', { user_id: referrer.id });
-                            alert('Referral recorded! Referrer will earn 100 🪙 after 1 hour.');
+                            alert('Referral recorded! Referrer will earn 100 🪙 after 24 hours if 2 referrals are completed.');
                         }
                     }
                 }
@@ -125,12 +398,19 @@
                     .eq('referrer_id', userData.userId)
                     .eq('rewarded', false);
                 for (let ref of referrals) {
-                    if (Date.now() - ref.timestamp >= 3600000) { // 1 hour
-                        userData.coins += 100;
-                        await supabase.from('referrals').update({ rewarded: true }).eq('id', ref.id);
-                        await saveUserData();
-                        updateUI();
-                        alert('You earned 100 🪙 from a referral!');
+                    if (Date.now() - ref.timestamp >= 86400000) { // 24 hours
+                        const { data: referralCount } = await supabase
+                            .from('referrals')
+                            .select('*')
+                            .eq('referrer_id', userData.userId)
+                            .eq('rewarded', false);
+                        if (referralCount.length >= 2) {
+                            userData.coins += 100;
+                            await supabase.from('referrals').update({ rewarded: true }).eq('id', ref.id);
+                            await saveUserData();
+                            updateUI();
+                            alert('You earned 100 🪙 from a referral!');
+                        }
                     }
                 }
             } catch (error) {
@@ -140,20 +420,11 @@
 
         async function checkReferralCopyRewards() {
             try {
-                const { data: referrals } = await supabase
-                    .from('referrals')
-                    .select('*')
-                    .eq('referrer_id', userData.userId)
-                    .eq('rewarded', false);
-                for (let ref of referrals) {
-                    if (Date.now() - ref.timestamp >= 3600000) { // 1 hour
-                        userData.coins += 100;
-                        userData.referrals += 2; // Add 2 referrals for copy
-                        await supabase.from('referrals').update({ rewarded: true }).eq('id', ref.id);
-                        await saveUserData();
-                        updateUI();
-                        alert('You earned 100 🪙 and 2 referrals for copying your referral!');
-                    }
+                const now = Date.now();
+                if (now - userData.lastCopyTime < 1800000) { // 30 min cooldown
+                    document.getElementById('copyReferral').disabled = true;
+                } else {
+                    document.getElementById('copyReferral').disabled = false;
                 }
             } catch (error) {
                 console.error('Referral copy rewards error:', error);
@@ -217,6 +488,8 @@
                     adCall = show_9892483({
                         type: 'inApp',
                         inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
+                    }).then(() => {
+                        rewardUser();
                     }).catch(() => {
                         alert('Ad failed to load. Please try again later.');
                     });
@@ -230,21 +503,30 @@
                 alert('Error watching ad. Please try again.');
             }
         }
-async function rewardUser() {
+
+        async function rewardUser() {
             try {
                 userData.coins += 20;
                 userData.adsWatched += 1;
                 userData.adsToday += 1;
                 userData.lastAdTime = Date.now();
-                if (userData.adsToday >= 100) {
-                    userData.lastAdResetTime = Date.now();
-                }
+                if (userData.adsToday >= 100) userData.lastAdResetTime = Date.now();
+                checkReferralMilestone();
                 await saveUserData();
                 updateUI();
                 startCountdown();
                 alert('You earned 20 🪙!');
             } catch (error) {
                 console.error('Reward user error:', error);
+            }
+        }
+
+        function checkReferralMilestone() {
+            const now = Date.now();
+            if (userData.adsWatched === 30 && !userData.lastReferralCheck) {
+                userData.lastReferralCheck = now;
+                alert('You have completed 30 ads! Refer 2 friends within 24 hours to unlock more ads.');
+                document.getElementById('ref-status').textContent = 'Refer 2 friends within 24h to unlock more ads!';
             }
         }
 
@@ -300,10 +582,12 @@ async function rewardUser() {
         async function checkAdReset() {
             try {
                 const now = Date.now();
-                if (userData.adsToday >= 100 && now - userData.lastAdResetTime >= 43200000) {
+                if (userData.adsToday > 0 && now - userData.lastAdResetTime >= 43200000) { // 12 hours
                     userData.adsToday = 0;
                     userData.lastAdResetTime = now;
                     await saveUserData();
+                    updateUI();
+                    alert('Your daily ad limit has reset! You can watch 100 ads again.');
                 }
             } catch (error) {
                 console.error('Ad reset error:', error);
@@ -317,14 +601,14 @@ async function rewardUser() {
             document.getElementById('total-coins').textContent = `${userData.coins} 🪙`;
             document.getElementById('ads-watched').textContent = userData.adsWatched;
             document.getElementById('ref-count').textContent = userData.referrals;
-            document.getElementById('ref-code').textContent = userData.referralCode;
+            document.getElementById('ref-code').textContent = `Your Telegram ID: ${userData.userId}\nJoin free crypto earning with @PandaXPNXbot! Referral Code: ${userData.referralCode} http://t.me/PandaXPNXbot`;
             document.getElementById('ads-today').textContent = `Ads watched today: ${userData.adsToday}/100`;
             document.getElementById('withdraw-coins').textContent = `${userData.coins} 🪙`;
-            document.getElementById('ref-status').textContent = userData.referrals >= 2 ? `2 referrals completed!` : '';
+            document.getElementById('ref-status').textContent = userData.referrals >= 2 ? `2 referrals completed!` : (userData.lastReferralCheck ? 'Refer 2 friends within 24h to unlock more ads!' : '');
         }
 
         async function saveUserData() {
-            try {
+    try {
                 const { error } = await supabase
                     .from('users')
                     .upsert({
@@ -336,7 +620,8 @@ async function rewardUser() {
                         last_ad_time: userData.lastAdTime,
                         last_ad_reset_time: userData.lastAdResetTime,
                         referrals: userData.referrals,
-                        referral_code: userData.referralCode
+                        referral_code: userData.referralCode,
+                        last_referral_check: userData.lastReferralCheck
                     })
                     .eq('id', userData.userId);
                 if (error) throw error;
